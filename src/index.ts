@@ -1,9 +1,12 @@
-import express from 'express'
+import log4js from 'log4js'
+import './telemetry/meter'
+import { startExpressWithMiddleware } from './middleware'
+import { router } from './router'
 
-const app = express()
+const logger = log4js.getLogger('server')
+logger.level = 'trace'
 
-app.get('/', (_req, res) => {
-  res.send('Hello World')
-})
+const app = startExpressWithMiddleware()
+router(app)
 
-app.listen(7070)
+app.listen(8081)
