@@ -1,0 +1,13 @@
+config:
+  target: 'ws://socketserver:8081/someTest'
+  phases:
+    - duration: 20
+      arrivalRate: 10
+  ws:
+    maxRedirects: 25
+
+scenarios:
+  - engine: ws
+    name: Echo a string
+    flow:
+      - send: 'Hello from Artillery'

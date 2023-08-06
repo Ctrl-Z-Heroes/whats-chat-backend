@@ -1,0 +1,79 @@
+version: '3.8'
+services:
+  # Collector
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.61.0
+    container_name: otel-collector
+    command: ['--config=/etc/otel-collector-config.yaml', '']
+    volumes:
+      - ./docker/collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - '1888:1888' # pprof extension
+      - '8888:8888' # Prometheus metrics exposed by the collector
+      - '8889:8889' # Prometheus exporter metrics
+      - '13133:13133' # health_check extension
+      - '4317:4317' # OTLP gRPC receiver
+      - '55679:55679' # zpages extension
+    networks:
+      - db_net
+
+  # Prometheus
+  prometheus:
+    image: quay.io/prometheus/prometheus:v2.34.0
+    command: --config.file=/etc/prometheus/prometheus.yml --no-scrape.adjust-timestamps
+    volumes:
+      - ./docker/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml
+    ports:
+      - '9090:9090'
+    networks:
+      - db_net
+
+  # Grafana
+  grafana:
+    image: grafana/grafana:9.0.1
+    container_name: grafana
+    volumes:
+      - ./docker/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./docker/grafana/provisioning/:/etc/grafana/provisioning/
+    ports:
+      - '3000:3000'
+    networks:
+      - db_net
+
+  # ZipKin
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - '9411:9411'
+    networks:
+      - db_net
+
+  # Artillery
+  artillery:
+    image: artilleryio/artillery:latest
+    volumes:
+      - ./docker/artillery:/scripts
+    command: ['run', '/scripts/test.yml']
+    depends_on:
+      - node
+    networks:
+      - db_net
+
+  # Node HTTP / WS Server
+  node:
+    build: . # Build the image using the Dockerfile in the current directory
+    container_name: socketserver
+    environment:
+      # Add this section to define environment variables
+      - OTEL_EXPORTER_ZIPKIN_ENDPOINT=http://zipkin:9411/api/v2/spans # Replace with your actual Zipkin endpoint URL
+    ports:
+      - '8081:8081' # Map port 8081 in the container to port 80 on the host
+    volumes:
+      - .:/app # Mount the current directory to the /app directory in the container
+    networks:
+      - db_net
+
+networks:
+  db_net:
+    name: db_net

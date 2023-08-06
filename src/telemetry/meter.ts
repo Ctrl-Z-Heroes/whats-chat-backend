@@ -6,7 +6,9 @@ import { MeterProvider, PeriodicExportingMetricReader } from '@opentelemetry/sdk
 const meterProvider = new MeterProvider({
   resource: new Resource({ 'service.name': 'whats-chat' })
 })
-const metricExporter = new OTLPMetricExporter()
+const metricExporter = new OTLPMetricExporter({
+  url: 'http://otel-collector:4317/v1/metrics'
+})
 const metricReader = new PeriodicExportingMetricReader({
   exporter: metricExporter,
   exportIntervalMillis: 60000

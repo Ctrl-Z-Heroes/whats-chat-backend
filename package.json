@@ -7,7 +7,7 @@
     "test": "vitest",
     "test:coverage": "vitest --coverage",
     "start:dev": "npx nodemon",
-    "build": "rimraf ./build && tsc",
+    "build": "rimraf ./build && rimraf ./coverage && tsc",
     "start": "npm run build && node build/index.js",
     "lint": "eslint . --ext .ts"
   },
