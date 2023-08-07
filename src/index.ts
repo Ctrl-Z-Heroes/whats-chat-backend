@@ -1,5 +1,6 @@
 import log4js from 'log4js'
 import './telemetry/meter'
+import './telemetry/instrumentation'
 import { startExpressWithMiddleware } from './middleware'
 import { router } from './router'
 import { createServer } from 'http'
