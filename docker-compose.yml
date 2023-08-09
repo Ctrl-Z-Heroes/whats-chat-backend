@@ -54,5 +54,18 @@ services:
     ports:
       - 3000:3000
 
+  node:
+    build: . # Build the image using the Dockerfile in the current directory
+    container_name: socketserver
+    environment:
+      # Add this section to define environment variables
+      - OTEL_EXPORTER_JAEGER_ENDPOINT=http://jaeger:14268/api/traces
+    ports:
+      - '8081:8081' # Map port 8081 in the container to port 80 on the host
+    volumes:
+      - .:/app # Mount the current directory to the /app directory in the container
+    networks:
+      - backend
+
 networks:
   backend:

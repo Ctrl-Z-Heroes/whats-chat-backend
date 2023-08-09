@@ -4,6 +4,8 @@ import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentation
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-proto'
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-proto'
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics'
+import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions'
+import { Resource } from '@opentelemetry/resources'
 
 const sdk = new opentelemetry.NodeSDK({
   traceExporter: new OTLPTraceExporter({
@@ -18,6 +20,9 @@ const sdk = new opentelemetry.NodeSDK({
       headers: {} // an optional object containing custom headers to be sent with each request
     })
   }),
-  instrumentations: [getNodeAutoInstrumentations()]
+  instrumentations: [getNodeAutoInstrumentations()],
+  resource: new Resource({
+    [SemanticResourceAttributes.SERVICE_NAME]: 'whats-chat'
+  })
 })
 sdk.start()
