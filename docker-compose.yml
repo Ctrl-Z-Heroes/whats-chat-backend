@@ -10,10 +10,13 @@ services:
     environment:
       - METRICS_STORAGE_TYPE=prometheus
       - PROMETHEUS_SERVER_URL=http://prometheus:9090
-      - LOG_LEVEL=debug
+      - LOG_LEVEL=info
       - PROMETHEUS_QUERY_SUPPORT_SPANMETRICS_CONNECTOR=true
     ports:
       - '16686:16686'
+      - '14250:14250'
+
+  # Collector
   otel_collector:
     networks:
       - backend
@@ -23,16 +26,21 @@ services:
     command: --config /etc/otelcol/otel-collector-config.yml
     ports:
       - '4317:4317'
+      - '4318:4318'
+      - '8888:8888'
+      - '8889:8889'
     depends_on:
       - jaeger
-  microsim:
-    networks:
-      - backend
-    image: yurishkuro/microsim:0.2.0
-    command: '-j http://otel_collector:14278/api/traces -d 24h -s 500ms'
-    depends_on:
-      - otel_collector
+    # microsim:
+    #   networks:
+    #     - backend
+    #   image: yurishkuro/microsim:0.2.0
+    #   command: '-j http://otel_collector:14278/api/traces -d 24h -s 500ms'
+    #   depends_on:
+    #     - otel-collector
+
   prometheus:
+    container_name: prometheus
     networks:
       - backend
     image: prom/prometheus:latest
@@ -40,6 +48,7 @@ services:
       - './docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml'
     ports:
       - '9090:9090'
+
   grafana:
     networks:
       - backend
@@ -53,19 +62,17 @@ services:
       - GF_AUTH_DISABLE_LOGIN_FORM=true
     ports:
       - 3000:3000
-
-  node:
-    build: . # Build the image using the Dockerfile in the current directory
-    container_name: socketserver
-    environment:
-      # Add this section to define environment variables
-      - OTEL_EXPORTER_JAEGER_ENDPOINT=http://jaeger:14268/api/traces
-    ports:
-      - '8081:8081' # Map port 8081 in the container to port 80 on the host
-    volumes:
-      - .:/app # Mount the current directory to the /app directory in the container
-    networks:
-      - backend
+  # node:
+  #   build: . # Build the image using the Dockerfile in the current directory
+  #   container_name: socketserver
+  #   ports:
+  #     - '8081:8081' # Map port 8081 in the container to port 80 on the host
+  #   volumes:
+  #     - .:/app # Mount the current directory to the /app directory in the container
+  #   networks:
+  #     - backend
+  #   depends_on:
+  #     - otel_collector
 
 networks:
   backend:

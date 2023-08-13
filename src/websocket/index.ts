@@ -1,7 +1,8 @@
 import { IncomingMessage, Server, ServerResponse } from 'http'
 import { WebSocket, WebSocketServer } from 'ws'
 import log4js from 'log4js'
-import { metrics, trace } from '@opentelemetry/api'
+import { metrics } from '@opentelemetry/api'
+import * as opentelemetry from '@opentelemetry/api'
 
 type WebSocketServerOptions = {
   server: Server<typeof IncomingMessage, typeof ServerResponse>
@@ -20,12 +21,15 @@ const joinRoom = (roomId: string, ws: WebSocket, roomManager: Map<string, Room>,
   logger.info(`Client joined room ${roomId}`)
 }
 
-const meter = metrics.getMeter('express-server')
-const gauge = meter.createUpDownCounter('websocket_connections_gauge', {
-  description: 'The number of WebSocket connections made to the server'
+const meter = metrics.getMeter('websocket-server')
+
+const messages = meter.createCounter('ws_messages', {
+  description: 'The total number of messages sent'
 })
 
-const tracer = trace.getTracer('websocket-server')
+const connections = meter.createUpDownCounter('ws_connections', {
+  description: 'The total number of connections'
+})
 
 export const startWebSocketServer = ({ server, logger }: WebSocketServerOptions) => {
   const roomManager = new Map<string, Room>()
@@ -33,17 +37,18 @@ export const startWebSocketServer = ({ server, logger }: WebSocketServerOptions)
 
   wss.on('connection', (ws, req) => {
     const roomId = req.url || '/'
-    gauge.add(1, { path: roomId })
+    connections.add(1, { room_id: roomId })
+
+    const activeSpan = opentelemetry.trace.getSpan(opentelemetry.context.active())
+    if (!activeSpan) throw new Error('No active span')
+    activeSpan.updateName(`WS:/${roomId}`)
 
     logger.info(`Connected to path - ${roomId}`)
-
     joinRoom(roomId, ws, roomManager, logger)
     logger.info(`Total clients in room ${roomId} => ${roomManager.get(roomId)?.clients.size}`)
 
     ws.on('message', (message) => {
-      const span = tracer.startSpan('websocket_message_processing')
-      span.addEvent('message_received') // Adding message as an event to the span
-      span.setAttribute('message', message.toString()) // Adding message as an attribute to the span
+      messages.add(1, { room_id: roomId })
       logger.info(`Received message => ${message}`)
       ws.send(`Hello, you sent => ${message}`)
 
@@ -55,17 +60,17 @@ export const startWebSocketServer = ({ server, logger }: WebSocketServerOptions)
           }
         })
       }
-      span.end()
     })
 
     ws.on('close', () => {
+      connections.add(-1, { room_id: roomId })
       const room = roomManager.get(roomId)
       if (room) {
         room.clients.delete(ws)
-        gauge.add(-1, { path: roomId })
         logger.info(`Client left room ${roomId}`)
       }
     })
+
     ws.on('error', (err) => {
       logger.error(err)
     })

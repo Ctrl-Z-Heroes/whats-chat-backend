@@ -1,17 +1,18 @@
-import { Resource } from '@opentelemetry/resources'
-import { metrics } from '@opentelemetry/api'
-import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-grpc'
-import { MeterProvider, PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics'
+import { PrometheusExporter } from '@opentelemetry/exporter-prometheus'
+import { MeterProvider } from '@opentelemetry/sdk-metrics'
 
-const meterProvider = new MeterProvider({
-  resource: new Resource({ 'service.name': 'whats-chat' })
+// Add your port and startServer to the Prometheus options
+const options = { port: 9090 }
+const exporter = new PrometheusExporter(options)
+
+// Creates MeterProvider and installs the exporter as a MetricReader
+const meterProvider = new MeterProvider()
+meterProvider.addMetricReader(exporter)
+const meter = meterProvider.getMeter('example-prometheus')
+
+// Now, start recording data
+const counter = meter.createCounter('example_counter', {
+  description: 'Example of a counter'
 })
-const metricExporter = new OTLPMetricExporter({
-  url: 'http://otel-collector:4317/v1/metrics'
-})
-const metricReader = new PeriodicExportingMetricReader({
-  exporter: metricExporter,
-  exportIntervalMillis: 60000
-})
-meterProvider.addMetricReader(metricReader)
-metrics.setGlobalMeterProvider(meterProvider)
+counter.add(10, { pid: process.pid })
+console.log('Counter recorded')
