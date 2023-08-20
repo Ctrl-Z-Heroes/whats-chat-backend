@@ -14,7 +14,18 @@ services:
       - PROMETHEUS_QUERY_SUPPORT_SPANMETRICS_CONNECTOR=true
     ports:
       - '16686:16686'
-      - '14250:14250'
+      - '14250:14250' #Artillery
+
+  # Artillery stress tester
+  artillery:
+    image: artilleryio/artillery:latest
+    volumes:
+      - ./docker/artillery:/scripts
+    command: ['run', '/scripts/test.yml']
+    depends_on:
+      - node
+    networks:
+      - backend
 
   # Collector
   otel_collector:

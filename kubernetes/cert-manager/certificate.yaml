@@ -1,0 +1,18 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: sample
+spec:
+  secretName: sample-tls
+  privateKey:
+    rotationPolicy: Always
+  commonName: sample.kubetown.co.uk
+  dnsNames:
+    - sample.kubetown.co.uk
+  usages:
+    - digital signature
+    - key encipherment
+    - server auth
+  issuerRef:
+    name: selfsigned
+    kind: ClusterIssuer
