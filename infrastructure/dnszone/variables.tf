@@ -18,7 +18,7 @@ variable "dns_zone_name" {
 
 variable "dns_ttl" {
   type        = number
-  default     = 3600
+  default     = 300
   description = "Time To Live (TTL) of the DNS record (in seconds)."
 }
 
