@@ -20,4 +20,10 @@ bash create.sh
 
 2. After the DNS zone has completed, you will need to add the four generated `namespace` records into your vendors domain portal.
 
+3. Test the updated namespace change on your domain by running:
+
+```sh
+dig <DOMAIN_NAME> ns +trace +nodnssec
+```
+
 **NOTE** - Leave the TTL at 5 mins whilst configuring so you aren't blocked by caching of unconfigured resources. The DNS may take anywhere between 5 mins and a few hours to propagate.
