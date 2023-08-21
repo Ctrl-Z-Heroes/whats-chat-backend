@@ -68,3 +68,28 @@ ure.com.
 sample-lb.westeurope.cloudapp.azure.com. 10 IN A 51.105.223.116
 
 ```
+
+## Connect to the URL
+
+You can run the below to connect to the url in insecure fashion.
+
+```sh
+curl --insecure -v https://sample.kubetown.co.uk
+```
+
+The response will look like this if succesful:
+
+```sh
+> Host: sample.kubetown.co.uk
+> User-Agent: curl/8.1.2
+> Accept: */*
+>
+< HTTP/2 200
+< content-type: text/plain; charset=utf-8
+< content-length: 70
+< date: Mon, 21 Aug 2023 08:51:33 GMT
+<
+Hello, world!
+Protocol: HTTP/2.0!
+Hostname: helloweb-5f4b966496-5gcwn
+```
