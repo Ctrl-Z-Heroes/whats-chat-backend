@@ -1,32 +1,32 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: whatsbackend
+  name: whats-chat-backend
 spec:
   type: ClusterIP
   ports:
   - port: 80
     targetPort: 8081
   selector:
-    app: whatsbackend
+    app: whats-chat-backend
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: whatsbackend
+  name: whats-chat-backend
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: whatsbackend
+      app: whats-chat-backend
   template:
     metadata:
       labels:
-        app: whatsbackend
+        app: whats-chat-backend
     spec:
       containers:
-      - name: whatsbackend
-        image: obarker94/whatsbackend:rc-123
+      - name: whats-chat-backend
+        image: obarker94/whats-chat-backend:rc-123
         ports:
         - containerPort: 80
         env:  # Add this section to set environment variables
