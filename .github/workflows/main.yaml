@@ -52,6 +52,7 @@ jobs:
 
     - name: Commit the ammended repo
       run: |
+        cd ./${{ github.event.repository.name }}
         git commit -am "Build Successful - ${{ github.run_id }}"
 
     - name: Print the file contents
