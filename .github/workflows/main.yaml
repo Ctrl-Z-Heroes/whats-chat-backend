@@ -21,7 +21,7 @@ jobs:
 
     - name: Set Docker image name
       run: |
-        IMAGE_NAME="${{ github.repository_owner }}/${{ github.repository_name}}"
+        IMAGE_NAME="${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository_name}}"
         IMAGE_TAG="${{ github.run_id }}"
         echo "Docker image name: $IMAGE_NAME"
         echo "Docker image tag: $IMAGE_TAG"
