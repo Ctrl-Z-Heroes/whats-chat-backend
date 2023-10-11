@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-    if: ${{ github.event.head_commit.author.name != 'GitHub Actions' }}
 
 jobs:
   docker:
@@ -55,9 +54,13 @@ jobs:
 
     - name: Commit the ammended repo
       run: |
-        ls
+
+       if [ "$GITHUB_ACTOR" = "github-actions[bot]" ]; then
+          echo "The commit was made by GitHub Actions bot. Skipping the workflow."
+          exit 78 # Skip the workflow with a neutral status
+        fi
+
         cd ./${{ github.event.repository.name }}
-        ls
         git commit -am "Build Successful - ${{ github.run_id }}"
         git push
 
