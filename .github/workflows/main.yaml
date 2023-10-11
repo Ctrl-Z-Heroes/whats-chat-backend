@@ -28,6 +28,7 @@ jobs:
         DOCKER_CLI_ACI: 1
 
   tag-and-commit:
+    needs: docker
     runs-on: ubuntu-latest
     steps:
 
