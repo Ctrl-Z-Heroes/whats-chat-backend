@@ -57,6 +57,7 @@ jobs:
         cd ./${{ github.event.repository.name }}
         ls
         git commit -am "Build Successful - ${{ github.run_id }}"
+        git push
 
     - name: Print the file contents
       run: |
