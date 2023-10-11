@@ -50,6 +50,10 @@ jobs:
           print $0
         }' ./${{ github.event.repository.name }}/kubernetes/deployment.yaml > temp.yaml && mv temp.yaml ./${{ github.event.repository.name }}/kubernetes/deployment.yaml
 
+    - name: Commit the ammended repo
+      run: |
+        git commit -am "Build Successful - ${{ github.run_id }}"
+
     - name: Print the file contents
       run: |
         cat ./${{ github.event.repository.name }}/kubernetes/deployment.yaml
