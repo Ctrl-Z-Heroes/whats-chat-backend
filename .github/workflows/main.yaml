@@ -6,9 +6,8 @@ on:
       - main
 
 jobs:
-  clone:
+  docker:
     runs-on: ubuntu-latest
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
@@ -28,15 +27,32 @@ jobs:
       env:
         DOCKER_CLI_ACI: 1
 
+  tag-and-commit:
+    runs-on: ubuntu-latest
+    steps:
+
     - name: Clone repository
       run: |
-        git config --global user.name ${{ secrets.GITHUB_USERNAME}}
-        git config --global user.email ${{ secrets.GITHUB_EMAIL}}
+        git config --global user.name ${{ secrets.GH_USERNAME}}
+        git config --global user.email ${{ secrets.GH_EMAIL}}
         git clone https://${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git
     
     - name: List all files in kubernetes sub-folder
       run: |
-        ls ./kubernetes
+        IMAGE_NAME="${{ secrets.DOCKERHUB_USERNAME}}/${{ github.event.repository.name}}"
+        echo $IMAGE_NAME
+        IMAGE_TAG="${{ github.run_id }}"
+
+        awk -v image_name="$IMAGE_NAME" -v tag="$IMAGE_TAG" '{
+          if ($0 ~ "image: " image_name) {
+            sub("image: " image_name ".*", "image: " image_name ":" tag)
+          }
+          print $0
+        }' ./kubernetes/deployment.yaml > temp.yaml && mv temp.yaml ./kubernetes/deployment.yaml
+
+    - name: Print the file contents
+      run: |
+        cat ./kubernetes/deployment.yaml
 
 
 
