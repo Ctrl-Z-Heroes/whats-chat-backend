@@ -4,20 +4,10 @@ on:
   push:
     branches:
       - main
+  if: ${{ github.actor != 'my_account' }}
 
 jobs:
-  should-i-run:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checks if I'm a github action bot or not
-        run: |
-          if [ "$GITHUB_ACTOR" = "github-actions[bot]" ]; then
-                    echo "The commit was made by GitHub Actions bot. Skipping the workflow."
-                    exit 78 # Skip the workflow with a neutral status
-          fi
-
   docker:
-    needs: should-i-run
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
