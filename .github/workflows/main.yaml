@@ -36,6 +36,7 @@ jobs:
         git config --global user.name "${{ secrets.GH_USERNAME }}"
         git config --global user.email "${{ secrets.GH_EMAIL }}"
         git clone https://${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git
+        ls
     
     - name: List all files in kubernetes sub-folder
       run: |
@@ -52,7 +53,9 @@ jobs:
 
     - name: Commit the ammended repo
       run: |
+        ls
         cd ./${{ github.event.repository.name }}
+        ls
         git commit -am "Build Successful - ${{ github.run_id }}"
 
     - name: Print the file contents
