@@ -48,7 +48,7 @@ jobs:
             sub("image: " image_name ".*", "image: " image_name ":" tag)
           }
           print $0
-        }' ./kubernetes/deployment.yaml > temp.yaml && mv temp.yaml ./kubernetes/deployment.yaml
+        }' ./${{ github.event.repository.name }}/kubernetes/deployment.yaml > temp.yaml && mv temp.yaml ./${{ github.event.repository.name }}/kubernetes/deployment.yaml
 
     - name: Print the file contents
       run: |
