@@ -18,5 +18,10 @@ jobs:
         git config --global user.name "obarker94"
         git config --global user.email "me@oliverbarker.io"
         git clone https://${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git
+    
+    - name: List all files in kubernetes sub-folder
+      run: |
+        ls ./kubernetes
+
 
 
