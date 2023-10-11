@@ -21,7 +21,7 @@ jobs:
 
     - name: Set Docker image name
       run: |
-        IMAGE_NAME="obarker94/whatschat"
+        IMAGE_NAME="${{ secrets.DOCKERHUB_USERNAME}}/whatschat"
         IMAGE_TAG="${{ github.run_id }}"
         echo "Docker image name: $IMAGE_NAME"
         echo "Docker image tag: $IMAGE_TAG"
