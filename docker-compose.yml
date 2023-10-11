@@ -31,7 +31,7 @@ services:
   otel_collector:
     networks:
       - backend
-    image: otel/opentelemetry-collector-contrib:0.80.0
+    image: otel/opentelemetry-collector-contrib:0.86.0
     volumes:
       - './docker/otel-collector/otel-collector-config-connector.yml:/etc/otelcol/otel-collector-config.yml'
     command: --config /etc/otelcol/otel-collector-config.yml
@@ -42,13 +42,6 @@ services:
       - '8889:8889'
     depends_on:
       - jaeger
-    # microsim:
-    #   networks:
-    #     - backend
-    #   image: yurishkuro/microsim:0.2.0
-    #   command: '-j http://otel_collector:14278/api/traces -d 24h -s 500ms'
-    #   depends_on:
-    #     - otel-collector
 
   prometheus:
     container_name: prometheus
@@ -74,8 +67,9 @@ services:
     ports:
       - 3000:3000
   node:
-    build: . # Build the image using the Dockerfile in the current directory
     container_name: socketserver
+    build:
+      dockerfile: Dockerfile
     ports:
       - '8081:8081' # Map port 8081 in the container to port 80 on the host
     volumes:

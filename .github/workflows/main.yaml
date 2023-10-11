@@ -1,0 +1,22 @@
+name: deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  clone:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Clone repository
+      run: |
+        git config --global user.name "obarker94"
+        git config --global user.email "me@oliverbarker.io"
+        git clone https://${{ secrets.PAT_TOKEN }}@github.com/${{ github.repository }}.git
+
+

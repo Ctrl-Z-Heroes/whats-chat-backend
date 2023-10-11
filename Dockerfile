@@ -1,5 +1,5 @@
 # Use an appropriate base image, for example, Node.js
-FROM node:18
+FROM node:20-alpine
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -18,4 +18,3 @@ EXPOSE 8081
 
 # Define the command to run your application
 CMD ["npm", "run", "start"]
-
