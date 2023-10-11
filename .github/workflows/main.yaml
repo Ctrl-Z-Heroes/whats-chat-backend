@@ -23,6 +23,7 @@ jobs:
       run: |
         IMAGE_NAME="${{ secrets.DOCKERHUB_USERNAME}}/whatschat"
         IMAGE_TAG="${{ github.run_id }}"
+        echo "Current repo: ${{ github.repository_name }}"
         echo "Docker image name: $IMAGE_NAME"
         echo "Docker image tag: $IMAGE_TAG"
         docker build -t $IMAGE_NAME:$IMAGE_TAG .
