@@ -21,12 +21,17 @@ jobs:
 
     - name: Set Docker image name
       run: |
-        IMAGE_NAME="${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository_name}}"
-        IMAGE_TAG="${{ github.run_id }}"
-        echo "Docker image name: $IMAGE_NAME"
+
+        IMAGE_NAME="${{ secrets.DOCKERHUB_USERNAME }}/${{ github.repository_name }}"
+
+        IMAGE_TAG=$(echo "${{ github.run_id }}" | tr '[:upper:][:punct:]' '-' | cut -c 1-128 | tr '[:upper:]' '[:lower:]')
+
+        echo "Docker image name: $IMAGE_NAME" 
         echo "Docker image tag: $IMAGE_TAG"
+
         docker build -t $IMAGE_NAME:$IMAGE_TAG .
         docker push $IMAGE_NAME:$IMAGE_TAG
+
       env:
         DOCKER_CLI_ACI: 1
 
