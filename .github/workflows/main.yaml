@@ -4,26 +4,10 @@ on:
   push:
     branches:
       - main
+    if: contains(github.event.head_commit.message, '[Automated]') == false
 
 jobs:
-  workflow-trigger:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Check if workflow triggered by GitHub Actions
-        run: |
-          PAT_USERNAME="${{ secrets.GH_USERNAME }}"
-          if [[ "${{ github.actor }}" == "${PAT_USERNAME}" ]]; then
-            echo "Workflow triggered by GitHub Actions. Skipping the job."
-            exit 0
-          fi
-        env:
-          PAT_USERNAME: ${{ secrets.GH_USERNAME }}
-
   docker:
-    needs: workflow-trigger
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
@@ -74,7 +58,7 @@ jobs:
 
        
         cd ./${{ github.event.repository.name }}
-        git commit -am "Build Successful - ${{ github.run_id }}"
+        git commit -am "[Automated] - Retag - ${{ github.run_id }}"
         git push
 
     - name: Print the file contents
