@@ -2,6 +2,6 @@ import { Express, Request, Response } from 'express'
 
 export function index(app: Express) {
   app.get('/', (_req: Request, res: Response) => {
-    res.send('doing an update')
+    res.send('test new update thing yeaaaa')
   })
 }
