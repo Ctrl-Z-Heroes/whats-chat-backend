@@ -57,3 +57,29 @@ jobs:
         cd ./${{ github.event.repository.name }}
         git commit -am "[Automated] - Retag - ${{ github.run_id }}"
         git push
+
+  argocd:
+    needs: tag-and-commit
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install Argo CLI
+      run: |
+        curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+        chmod +x /usr/local/bin/argocd
+
+    - name: Log in to ArgoCD  
+      run: |
+        argocd login ${{ secrets.ARGO_SERVER}} --username ${{ secrets.ARGO_USERNAME}} --password ${{ secrets.ARGO_PASSWORD }} --insecure
+
+    - name: Create Argo app if it doesn't exist
+      run: |
+        if ! argocd app get ${{ github.event.repository.name }} ; then
+          argocd app create ${{ github.event.repository.name }} --repo https://github.com/${{ github.repository_owner }}/${{ github.event.repository.name }} --path ./kubernetes --dest-namespace default fi
+          
+    - name: Sync app
+      run: |
+        argocd app sync ${{ github.event.repository.name }}
