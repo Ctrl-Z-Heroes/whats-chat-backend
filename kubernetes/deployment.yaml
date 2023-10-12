@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
       - name: whats-chat-backend
-        image: obarker94/whats-chat-backend:6489744483
+        image: obarker94/whats-chat-backend:6490888379
         ports:
         - containerPort: 80
         env:  # Add this section to set environment variables
