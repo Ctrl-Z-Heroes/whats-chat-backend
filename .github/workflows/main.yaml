@@ -77,7 +77,8 @@ jobs:
 
     - name: Create Argo app if it doesn't exist
       run: |
-        argocd app create ${{ github.event.repository.name }} --repo https://github.com/${{ github.repository_owner }}/${{ github.event.repository.name }} --path ./kubernetes --dest-namespace default 
+        if ! argocd app get ${{ github.event.repository.name }} ; then argocd app create ${{ github.event.repository.name }} --repo https://github.com/${{ github.repository_owner }}/${{ github.event.repository.name }}.git --path ./kubernetes --dest-server https://kubernetes.default.svc --dest-namespace default 
+        fi
           
     - name: Sync app
       run: |
