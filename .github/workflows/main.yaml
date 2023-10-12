@@ -83,19 +83,3 @@ jobs:
     - name: Sync app
       run: |
         argocd app sync ${{ github.event.repository.name }}
-
-    - name: Wait for deployment
-      run: |
-        DEPLOYMENT_NAME="${{ github.event.repository.name }}"
-        TIMEOUT=60
-        INTERVAL=10
-        for i in $(seq 1 $TIMEOUT); do
-          STATUS=$(kubectl get deploy $DEPLOYMENT_NAME -o jsonpath='{.status.conditions[?(@.type=="Available")].status}')
-          if [ "$STATUS" == "True" ]; then
-            echo "Deployment $DEPLOYMENT_NAME is available"
-            exit 0
-          fi
-          sleep $INTERVAL
-        done
-        echo "Timeout waiting for $DEPLOYMENT_NAME to be available"
-        exit 1
