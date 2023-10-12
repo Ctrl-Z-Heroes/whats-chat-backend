@@ -73,12 +73,11 @@ jobs:
 
     - name: Log in to ArgoCD  
       run: |
-        argocd login ${{ secrets.ARGO_SERVER}} --username ${{ secrets.ARGO_USERNAME}} --password ${{ secrets.ARGO_PASSWORD }} --insecure
+        y | argocd login ${{ secrets.ARGO_SERVER }} --username ${{ secrets.ARGO_USERNAME }} --password ${{ secrets.ARGO_PASSWORD }} --insecure
 
     - name: Create Argo app if it doesn't exist
       run: |
-        if ! argocd app get ${{ github.event.repository.name }} ; then argocd app create ${{ github.event.repository.name }} --repo https://github.com/${{ github.repository_owner }}/${{ github.event.repository.name }} --path ./kubernetes --dest-namespace default 
-        fi
+        argocd app create ${{ github.event.repository.name }} --repo https://github.com/${{ github.repository_owner }}/${{ github.event.repository.name }} --path ./kubernetes --dest-namespace default 
           
     - name: Sync app
       run: |
