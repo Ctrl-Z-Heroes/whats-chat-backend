@@ -8,7 +8,7 @@ metadata:
     external-dns.alpha.kubernetes.io/hostname: "*.kubetown.co.uk"
 spec:
   rules:
-  - host: bigtest.kubetown.co.uk
+  - host: hugeplay.kubetown.co.uk
     http:
       paths:
       - pathType: Prefix
@@ -21,6 +21,6 @@ spec:
 
   tls:
   - hosts:
-    - bigtest.kubetown.co.uk
-    secretName: bigtest-kubetown-secret
+    - hugeplay.kubetown.co.uk
+    secretName: hugeplay-kubetown-secret
 
