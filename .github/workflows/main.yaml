@@ -83,4 +83,3 @@ jobs:
     - name: Sync app
       run: |
         argocd app sync ${{ github.event.repository.name }}
-
