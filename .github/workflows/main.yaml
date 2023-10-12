@@ -86,7 +86,7 @@ jobs:
 
     - name: Wait for deployment
       run: |
-        DEPLOYMENT_NAME={{ github.event.repository.name }}
+        DEPLOYMENT_NAME="${{ github.event.repository.name }}"
         TIMEOUT=60
         INTERVAL=10
         for i in $(seq 1 $TIMEOUT); do
