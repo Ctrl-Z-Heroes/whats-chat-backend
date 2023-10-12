@@ -73,7 +73,7 @@ jobs:
 
     - name: Log in to ArgoCD  
       run: |
-        y | argocd login ${{ secrets.ARGO_SERVER }} --username ${{ secrets.ARGO_USERNAME }} --password ${{ secrets.ARGO_PASSWORD }} --insecure
+        y | argocd login ${{ secrets.ARGO_SERVER }} --username ${{ secrets.ARGO_USERNAME }} --password ${{ secrets.ARGO_PASSWORD }}
 
     - name: Create Argo app if it doesn't exist
       run: |
