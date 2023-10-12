@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: test-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt    
+    external-dns.alpha.kubernetes.io/hostname: "*.kubetown.co.uk"
+spec:
+  rules:
+  - host: bigtest.kubetown.co.uk
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: whats-chat-backend
+            port:
+              number: 80
+
+  tls:
+  - hosts:
+    - bigtest.kubetown.co.uk
+    secretName: bigtest-kubetown-secret
+
