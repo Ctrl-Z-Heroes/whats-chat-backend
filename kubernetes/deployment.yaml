@@ -32,3 +32,4 @@ spec:
         env:  # Add this section to set environment variables
         - name: OTEL_COLLECTOR_ADDRESS
           value: "http://app-opentelemetry-collector.default.svc.cluster.local:4318"
+
